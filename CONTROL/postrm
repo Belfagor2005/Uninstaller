@@ -1,0 +1,24 @@
+#!/bin/sh
+
+echo
+echo "*****************************************"
+echo "*         Uninstall Uninstaller        *"
+echo "*****************************************"
+EXTDIR="/usr/lib/enigma2/python/Plugins/Extensions/Uninstaller"
+dream='/var/lib/dpkg/info'
+
+if [ -d "$dream" ]; then
+   dpkg -P --force-all enigma2-plugin-extensions-Uninstaller
+   rm -rf "$EXTDIR" > /dev/null 2>&1
+fi
+
+if [ -d "$EXTDIR" ]; then
+   opkg remove --force-remove enigma2-plugin-extensions-Uninstaller
+   rm -rf "$EXTDIR" > /dev/null 2>&1
+fi
+echo "*****************************************"
+echo "*          ....done                     *"
+echo "*****************************************"
+exit 0
+
+

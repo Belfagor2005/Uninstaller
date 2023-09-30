@@ -1,0 +1,8 @@
+Package: enigma2-plugin-extensions-uninstaller
+Version: 1.0
+Description: Uninstaller version 1.0
+Section: base
+Priority: optional
+Maintainer: *
+Architecture: all
+Depends: enigma2

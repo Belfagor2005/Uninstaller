@@ -1,0 +1,10 @@
+#!/bin/sh
+echo "Checking for an older version of Uninstaller in the system..."
+EXTDIR="/usr/lib/enigma2/python/Plugins/Extensions/Uninstaller"
+if [ -d "$EXTDIR" ]; then
+   rm -rf "$EXTDIR" > /dev/null 2>&1
+fi
+echo "***********************************"
+echo "* Proceeding to installation...   *"
+echo "***********************************"
+exit 0
