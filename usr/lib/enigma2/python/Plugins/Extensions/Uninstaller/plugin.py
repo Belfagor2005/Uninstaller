@@ -151,30 +151,34 @@ class Uninstaller(Screen):
 
     def delay(self):
         global cmdx
+        path = ('/var/lib/opkg/info')
         if os.path.exists(myfile):
             os.remove(myfile)
         if os.path.exists('/var/lib/dpkg/info'):
             # cmdx = 'dpkg -l | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
             # cmdx = 'apt list --installed > /tmp/ipkdb 2>&1 &'
             path = ('/var/lib/dpkg/info')
-            with open(myfile, 'w') as f:
-                for root, dirs, files in os.walk(path):
-                    if files is not None:
-                        for name in files:
-                            if name.startswith('enigma2-plugin') and name.endswith('.list'):
-                                print(str(name))
-                                name = name.replace('.list', '')
-                                f.write(str(name) + '\n')
-                f.close()
+            
+        # else:
+            # path = ('/var/lib/opkg/info')
+        with open(myfile, 'w') as f:
+            for root, dirs, files in os.walk(path):
+                if files is not None:
+                    for name in files:
+                        if name.startswith('enigma2-plugin') and name.endswith('.list'):
+                            print(str(name))
+                            name = name.replace('.list', '')
+                            f.write(str(name) + '\n')
+            f.close()
             
             
-        else:
-            cmdx = 'opkg list_installed | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
-            file_ = os.popen(cmdx).read()
-            with open(myfile, 'w') as f:
-                f.write(file_)
-                f.seek(0)
-                f.close()
+        # else:
+            # cmdx = 'opkg list_installed | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
+            # file_ = os.popen(cmdx).read()
+            # with open(myfile, 'w') as f:
+                # f.write(file_)
+                # f.seek(0)
+                # f.close()
         return
 
     def okClicked(self):
