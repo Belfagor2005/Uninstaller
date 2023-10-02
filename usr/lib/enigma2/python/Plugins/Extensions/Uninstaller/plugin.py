@@ -20,12 +20,11 @@ global cmdx
 cmdx = 'opkg list_installed | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
 myfile = '/tmp/ipkdb'
 version = '1.0'
+screenwidth = getDesktop(0).size()
 # dpkg -l | grep g
 # apt list --installed
 # apt-get remove
 # dpkg -r $paketname
-screenwidth = getDesktop(0).size()
-
 
 def main(session, **kwargs):
     session.open(Uninstaller)
@@ -33,6 +32,19 @@ def main(session, **kwargs):
 
 def Plugins(**kwargs):
     return PluginDescriptor(name=_("Uninstaller"), description=_("Choose and uninstall an addon package"), where=PluginDescriptor.WHERE_PLUGINMENU, icon="icon.png", fnc=main)
+
+
+def freespace():
+    try:
+        diskSpace = os.statvfs('/')
+        capacity = float(diskSpace.f_bsize * diskSpace.f_blocks)
+        available = float(diskSpace.f_bsize * diskSpace.f_bavail)
+        fspace = round(float(available / 1048576.0), 2)
+        tspace = round(float(capacity / 1048576.0), 1)
+        spacestr = 'Free space(' + str(fspace) + 'MB) - Total space(' + str(tspace) + 'MB)'
+        return spacestr
+    except:
+        return ''
 
 
 class packList(MenuList):
@@ -69,47 +81,57 @@ def pakage_entry(name):
 
 class Uninstaller(Screen):
     skin = '''
-            <screen name="Uninstaller" position="center,center" size="1220,600" title="Uninstaller by Lululla">
-                <widget name="list" position="10,66" size="1200,500" scrollbarMode="showOnDemand" zPosition="2" />
-                <widget name="info" position="11,5" zPosition="4" size="1193,55" font="Regular; 32" foregroundColor="#ffffff" transparent="1" halign="center" valign="center" />
+            <screen name="Uninstaller" position="center,center" size="1980,1200" title="Uninstaller by Lululla">
+                <widget name="list" position="35,156" size="1900,894" scrollbarMode="showOnDemand" zPosition="2" />
+                <widget name="info" position="16,5" zPosition="4" size="1937,123" font="Regular; 54" foregroundColor="#ffffff" transparent="1" halign="center" valign="center" />
+                <widget name="fspace" position="13,1063" zPosition="4" size="1937,123" font="Regular; 54" foregroundColor="#5dafff" transparent="1" halign="center" valign="center" />
             </screen>
             '''
 
     if screenwidth.width() == 2560:
         skin = '''
                 <screen name="Uninstaller" position="center,center" size="1980,1200" title="Uninstaller by Lululla">
-                    <widget name="list" position="30,156" size="1900,1000" scrollbarMode="showOnDemand" zPosition="2" />
-                    <widget name="info" position="11,5" zPosition="4" size="1937,123" font="Regular; 54" foregroundColor="#ffffff" transparent="1" halign="center" valign="center" />
+                    <widget name="list" position="35,156" size="1900,894" scrollbarMode="showOnDemand" zPosition="2" />
+                    <widget name="info" position="16,5" zPosition="4" size="1937,123" font="Regular; 54" foregroundColor="#ffffff" transparent="1" halign="center" valign="center" />
+                    <widget name="fspace" position="13,1063" zPosition="4" size="1937,123" font="Regular; 54" foregroundColor="#5dafff" transparent="1" halign="center" valign="center" />
                 </screen>
                 '''
 
     def __init__(self, session):
         Screen.__init__(self, session)
         self.skin = Uninstaller.skin
-        title = 'Uninstaller v.%s by Lululla' % version
-        self.setTitle(title)
+        self.title = 'Uninstaller v.%s by Lululla' % version
+        self.setTitle(self.title)
         self['list'] = packList([])
         self['info'] = Label()
+        self['fspace'] = Label()
         self['actions'] = ActionMap(['OkCancelActions'], {'ok': self.okClicked,
                                                           'cancel': self.close}, -1)
         txt = _('Wait Please...')
         self['info'].setText(txt)
+        self['fspace'].setText('wait... please')
         self.timerw = eTimer()
         if os.path.exists('/var/lib/dpkg/info'):
             self.timerw_conn = self.timerw.timeout.connect(self.UploadList)
         else:
             self.timerw.callback.append(self.UploadList)
         self.timerw.start(100, 1)
-        # self.onShown.append(self.UploadList)
+        self.onShown.append(self.layoutEnd)
+
+
+    def layoutEnd(self):
+        try:
+            fspace = freespace()
+            self['fspace'].setText(str(fspace))
+        except Exception as e:
+            print(e)
+            self['fspace'].setText('')
+        self.setTitle(self.title)
 
     def UploadList(self):
         if os.path.exists(myfile):
             os.remove(myfile)
         self.list = []
-        # del self.list[:]
-        # for x in self.list:
-            # print('xxxx= ', x)
-            # del self.list[0:x]
         self.delay()
         os.system('sleep 5')
         if os.path.exists(myfile):
@@ -119,10 +141,8 @@ class Uninstaller(Screen):
                         line = str(line)
                         print(line)
                     self.list.append(pakage_entry(line[:-1]))
-                # self.list.sort()
             if len(self.list) > -1:
                 self.list.sort(key=lambda x: x, reverse=False)
-                # self["list"].list = self.list
                 self["list"].setList(self.list)
                 txt = _('Please Select the Package to Remove')
                 self['info'].setText(txt)
@@ -132,22 +152,6 @@ class Uninstaller(Screen):
         else:
             txt = _('Error Unknow')
             self['info'].setText(txt)
-        '''
-        # if os.path.exists('/var/volatile/tmp/ipkdb'):
-            # with open('/tmp/ipkdb') as file_:
-                # for line in file_:
-                    # line = str(line)
-                    # print(line)
-                    # self.list.append(pakage_entry(line[:-1]))
-            # file_.close()
-            # self.list.sort()
-            # self['list'].setList(self.list)
-            # txt = _('Please Select the Package to Remove')
-            # self['info'].setText(txt)
-        # else:
-            # txt = _('Error Unknow')
-            # self['info'].setText(txt)
-        '''
 
     def delay(self):
         global cmdx
@@ -158,9 +162,6 @@ class Uninstaller(Screen):
             # cmdx = 'dpkg -l | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
             # cmdx = 'apt list --installed > /tmp/ipkdb 2>&1 &'
             path = ('/var/lib/dpkg/info')
-            
-        # else:
-            # path = ('/var/lib/opkg/info')
         with open(myfile, 'w') as f:
             for root, dirs, files in os.walk(path):
                 if files is not None:
@@ -170,15 +171,6 @@ class Uninstaller(Screen):
                             name = name.replace('.list', '')
                             f.write(str(name) + '\n')
             f.close()
-            
-            
-        # else:
-            # cmdx = 'opkg list_installed | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
-            # file_ = os.popen(cmdx).read()
-            # with open(myfile, 'w') as f:
-                # f.write(file_)
-                # f.seek(0)
-                # f.close()
         return
 
     def okClicked(self):
@@ -187,8 +179,6 @@ class Uninstaller(Screen):
         if ires is not None:
             self.ipk = self.list[ires][0]
             print('self.ipk 1: ', self.ipk)
-            # n1 = self.ipk.find('_', 0)
-            # self.ipk = self.ipk[:n1]
             self.session.openWithCallback(self.test, ChoiceBox, title=_('Select method:'), list=[(_('Remove'), 'rem'), (_('Force Remove'), 'force')])
         else:
             return
