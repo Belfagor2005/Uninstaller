@@ -16,8 +16,6 @@ from enigma import eListboxPythonMultiContent
 from enigma import eTimer, getDesktop
 from enigma import loadPNG, gFont
 import os
-global cmdx
-cmdx = 'opkg list_installed | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
 myfile = '/tmp/ipkdb'
 version = '1.0'
 screenwidth = getDesktop(0).size()
@@ -154,13 +152,10 @@ class Uninstaller(Screen):
             self['info'].setText(txt)
 
     def delay(self):
-        global cmdx
         path = ('/var/lib/opkg/info')
         if os.path.exists(myfile):
             os.remove(myfile)
         if os.path.exists('/var/lib/dpkg/info'):
-            # cmdx = 'dpkg -l | grep enigma2-plugin > /tmp/ipkdb 2>&1 &'
-            # cmdx = 'apt list --installed > /tmp/ipkdb 2>&1 &'
             path = ('/var/lib/dpkg/info')
         with open(myfile, 'w') as f:
             for root, dirs, files in os.walk(path):
@@ -204,7 +199,6 @@ class Uninstaller(Screen):
                     cmd = 'opkg remove --force-depends ' + add
                     title = _('Force Removing ipk %s' % add)
             self.session.open(Console, _(title), [cmd])
-            self.close()
         except Exception as e:
             print('error ', e)
-            self.close()
+        self.close()
