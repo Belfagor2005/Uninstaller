@@ -14,8 +14,8 @@ import gettext
 from Components.Language import language
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 
-PluginLanguageDomain = "moviebrowser"
-PluginLanguagePath = "Extensions/MovieBrowser/locale"
+PluginLanguageDomain = "Uninstaller"
+PluginLanguagePath = "Extensions/Uninstaller/locale"
 
 isDreambox = os.path.exists("/usr/bin/apt-get")
 
