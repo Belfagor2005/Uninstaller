@@ -33,9 +33,8 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 
 # Plugin imports
 from Plugins.Plugin import PluginDescriptor
-
+from . import __version__
 myfile = '/tmp/ipkdb'
-version = '1.0'
 screenwidth = getDesktop(0).size()
 
 
@@ -104,7 +103,7 @@ class Uninstaller(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.skin = Uninstaller.skin
-		self.title = 'Uninstaller v.%s by Lululla' % version
+		self.title = 'Uninstaller v.%s by Lululla' % __version__
 		self.setTitle(self.title)
 		self['list'] = packList([])
 		self['info'] = Label()
