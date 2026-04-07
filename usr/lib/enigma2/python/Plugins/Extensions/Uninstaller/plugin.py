@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Built-in imports
-from . import _
 import os
-
-# Enigma2 core imports
 from enigma import (
 	RT_HALIGN_LEFT,
 	RT_VALIGN_CENTER,
@@ -15,25 +11,18 @@ from enigma import (
 	loadPNG,
 	gFont
 )
-
-# Enigma2 component imports
 from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryPixmapAlphaTest
 from Components.MultiContent import MultiContentEntryText
-
-# Enigma2 screen imports
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Console import Console
 from Screens.Screen import Screen
-
-# Enigma2 tools imports
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
-
-# Plugin imports
 from Plugins.Plugin import PluginDescriptor
-from . import __version__
+
+from . import _, __version__
 myfile = '/tmp/ipkdb'
 screenwidth = getDesktop(0).size()
 
