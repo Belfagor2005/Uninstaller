@@ -20,9 +20,9 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.Console import Console
 from Screens.Screen import Screen
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
-from Plugins.Plugin import PluginDescriptor
 
 from . import _, __version__
+
 myfile = '/tmp/ipkdb'
 screenwidth = getDesktop(0).size()
 
@@ -32,6 +32,7 @@ def main(session, **kwargs):
 
 
 def Plugins(**kwargs):
+    from Plugins.Plugin import PluginDescriptor
     return PluginDescriptor(
         name=_("Uninstaller"),
         description=_("Choose and uninstall an addon package"),
@@ -230,6 +231,9 @@ class Uninstaller(Screen):
         return
 
     def test(self, answer):
+        if answer is None:
+            return
+
         try:
             cmd = ' '
             title = ' '
